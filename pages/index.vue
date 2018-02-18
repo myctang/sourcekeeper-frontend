@@ -8,29 +8,27 @@
               <div class="input-group-prepend">
                 <span class="input-group-text"><span class="icon-magnifier"></span></span>
               </div>
-              <input type="text" class="form-control" placeholder="Поиск">
+              <input v-model="this.search" type="text" class="form-control" placeholder="Поиск">
             </div>
           </div>
           <div class="form-group">
             <div class="row">
-              <div class="col-12 col-sm-4">
+              <div class="col-12 col-sm-2">
                 <label>Группа</label>
-                <input type="text" class="form-control" placeholder="Группа">
+                <ColorPicker v-on:color-change="colorChange" />
               </div>
-              <div class="col-12 col-sm-4">
+              <div class="col-12 col-sm-5">
                 <label>Тип</label>
-                <select class="form-control">
-                  <option>Статья</option>
-                  <option>Книга</option>
-                  <option>Лекция</option>
+                <select v-model="this.category" class="form-control">
+                  <option value="any">Любой</option>
+                  <option value="article">Статья</option>
+                  <option value="book">Книга</option>
+                  <option value="lection">Лекция</option>
                 </select>
               </div>
-              <div class="col-12 col-sm-4">
-                <label>Язык</label>
-                <select class="form-control">
-                  <option>Английский</option>
-                  <option>Русский</option>
-                </select>
+              <div class="col-12 col-sm-5">
+                <label>Автор</label>
+                <input type="text" class="form-control">
               </div>
             </div>
           </div>
@@ -41,23 +39,25 @@
       <div class="col-12">
         <table class="table">
           <thead>
-            <th>Название</th>
-            <th class="d-none d-sm-table-cell">Автор</th>
-            <th class="d-none d-sm-table-cell">Тип</th>
-            <th>Группа</th>
-            <th>Действия</th>
+            <tr>
+              <th>Название</th>
+              <th class="d-none d-sm-table-cell">Автор</th>
+              <th class="d-none d-sm-table-cell">Тип</th>
+              <th>Группа</th>
+              <th v-if="this.$store.state.user.admin">Действия</th>
+            </tr>
           </thead>
           <tbody>
             <tr v-for="source in $store.state.sources" v-bind:key="source.id">
               <td><a href="#">{{ source.title }}</a></td>
               <td class="d-none d-sm-table-cell">{{ source.author }}</td>
-              <td class="d-none d-sm-table-cell">{{ source.category }}</td>
+              <td class="d-none d-sm-table-cell">{{ type(source.category) }}</td>
               <td>
                 <div v-bind:class="'group-mark group-' + source.group"></div>
               </td>
-              <td>
-                <a class="btn btn-outline-primary btn-sm" href="#" title="Редактировать"><span class="icon-pencil"></span></a>
-                <a class="btn btn-outline-danger btn-sm" href="#" title="Удалить"><span class="icon-trash"></span></a>
+              <td v-if="$store.state.user.admin">
+                <nuxt-link to="/edit" class="btn btn-outline-primary btn-sm" title="Редактировать"><span class="icon-pencil"></span></nuxt-link>
+                <a @click.prevent="removeSource(source.id)" class="btn btn-outline-danger btn-sm" href="#" title="Удалить"><span class="icon-trash"></span></a>
               </td>
             </tr>
           </tbody>
@@ -68,12 +68,41 @@
 </template>
 
 <script>
+import ColorPicker from '~/components/ColorPicker.vue'
+import axios from 'axios'
+
 export default {
+  components: {
+    ColorPicker
+  },
+
   data () {
     return {
-      group: "",
-      category: 0,
-      language: 0
+      search: "",
+      group: "white",
+      category: "any"
+    }
+  },
+
+  methods: {
+    colorChange (color) {
+      this.group = color
+    },
+
+    type (category) {
+      return {
+        article: 'Статья',
+        book: 'Книга',
+        lection: 'Лекция'
+      }[category]
+    },
+
+    removeSource (id) {
+      axios.delete('/sources/' + id).then((response) => {
+        this.$store.commit('setSources', JSON.parse(response))
+      }).catch((err) => {
+
+      })
     }
   }
 }
@@ -97,7 +126,15 @@ export default {
   }
 
   .group-green {
-    background-color: rgb(18, 136, 38);
+    background-color: rgb(96, 143, 104);
+  }
+
+  .group-yellow {
+    background-color: rgb(212, 212, 120);
+  }
+
+  .group-red {
+    background-color: rgb(202, 135, 135);
   }
 
   .index {

@@ -3,6 +3,8 @@ module.exports = {
   ** Headers of the page
   */
   head: {
+    mode: 'spa',
+    
     title: 'SourceKeeper',
     meta: [
       { charset: 'utf-8' },
@@ -16,14 +18,12 @@ module.exports = {
       { rel: 'stylesheet', type: 'text/css', href: '/css/simple-line-icons.css' }
     ],
     script: [
-      { src: '/js/jquery-3.2.1.min.js' },
-      { src: '/js/popper.js' },
-      { src: '/js/bootstrap.min.js' }
+      { src: '/js/bootstrap.bundle.min.js' }
     ]
   },
 
   modules: [
-    '@nuxtjs/axios',
+    '@nuxtjs/axios'
   ],
 
   /*
@@ -46,6 +46,8 @@ module.exports = {
           exclude: /(node_modules)/
         })
       }
-    }
+    },
+
+    vendor: ['axios']
   }
 }

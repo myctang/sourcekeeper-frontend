@@ -1,14 +1,23 @@
 <template>
   <div>
     <nav class="navbar navbar-expand-lg justify-content-between navbar-dark bg-primary">
-      <nuxt-link class="navbar-brand" to="#">SourceKeeper</nuxt-link>
-      <nuxt-link class="navbar-login-link" to="/login">Войти</nuxt-link>
+      <nuxt-link to="/" class="navbar-brand">SourceKeeper</nuxt-link>
+      <nuxt-link v-if="!this.$store.state.user.id" class="navbar-login-link" to="/login">Войти</nuxt-link>
+      <div v-if="this.$store.state.user.id" class="user-buttons">
+        <nuxt-link v-if="this.$store.state.user.admin" to="/new" class="btn btn-success">Новый источник</nuxt-link>
+        <nuxt-link to="/accounts/logout" class="btn btn-success">Выйти</nuxt-link>
+      </div>
     </nav>
     <nuxt/>
   </div>
 </template>
 
-<style>
+<script>
+  export default {
+  }
+</script>
+
+<style lang="scss">
   .navbar {
     margin-bottom: 20px;
   }
@@ -19,6 +28,12 @@
 
   .navbar-login-link:hover {
     color: white;
+  }
+
+  nav .user-buttons {
+    .btn:not(:last-child) {
+      margin-right: 10px;
+    }
   }
 
   .block {

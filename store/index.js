@@ -4,46 +4,49 @@ const createStore = () => {
   return new Vuex.Store({
     state: {
       user: {
-        id: 0
+        id: 1,
+        admin: true
       },
 
       sources: [
         {
           id: 1,
+          url: "none",
           title: 'Как стать программистом',
           author: 'Игорь Попов',
-          category: 'История успеха',
-          keywords: [],
-          group: "white",
-          language: ""
+          category: 'lection',
+          keywords: "",
+          group: "white"
         },
         {
-          id: 1,
+          id: 2,
+          url: "none",
           title: 'Как стать программистом',
           author: 'Игорь Попов',
-          category: 'История успеха',
-          keywords: [],
-          group: "green",
-          language: ""
+          category: 'book',
+          keywords: "",
+          group: "green"
         }
       ]
     },
 
     mutations: {
-      newSource (state, payload) {
-        state.sources.push({
-          id: payload.id,
-          title: payload.title,
-          author: payload.author,
-          category: payload.category,
-          keywords: payload.keywords,
-          group: payload.group,
-          language: payload.language
-        })
+      setSources (state, payload) {
+        state.sources = []
+
+        for (let i = 0; i < payload.length; i++) {
+          state.sources.push(payload)
+        }
       },
 
-      removeSource (state, payload) {
+      setUser (state, payload) {
+        state.user.id = payload.id
+        state.user.admin = payload.admin
+      },
 
+      unsetUser (state, payload) {
+        state.user.id = 0
+        state.user.admin = false
       }
     }
   })
